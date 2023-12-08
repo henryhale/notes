@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8" />
+	<link rel="icon" type="image/svg+xml" href="/vite.svg" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Notes</title>
+</head>
+
+<body>
+	<main x-data="state">
+		<div x-show="!newnote && !notes.length" class="box">
+			<span>What's on your mind?</span>
+			<button type="button" class="btn" @click="() => {newnote = true; category = 1;}">
+				<span>Create</span>
+			</button>
+		</div>
+
+		<div x-show="newnote">
+			<div class="text-2xl mb-2">
+				<span>Write something!</span>
+			</div>
+			<div class="flex space-x-2 w-full">
+				<select x-model="category" name="category">
+					<template x-for="c in categories.slice(1)" :key="c.name">
+						<option :value="c.value" x-text="c.name"></option>
+					</template>
+				</select>
+				<span class="flex-grow"></span>
+				<button type="button" class="btn" @click="newnote = false">
+					<span>Cancel</span>
+				</button>
+				<button type="button" class="btn" @click="saveNote" :disabled="!note.length">
+					<span>Save</span>
+				</button>
+			</div>
+			<div class="w-full">
+				<textarea x-model.trim="note" name="input" placeholder="Type here..."></textarea>
+			</div>
+		</div>
+
+		<div x-show="!newnote && notes.length" class="list">
+			<aside>
+				<div class="brand">
+					<span>Notes</span>
+				</div>
+				<ul class="flex-grow space-y-2 px-1">
+					<template x-for="c in categories" :key="c.name">
+						<li class="menu-item" :class="[c.color, c.value == category ? 'active-item': '']"
+							@click="() => { category = c.value; search = '';}">
+							<svg class="w-6 h-6 inline-block fill-current">
+								<use :href="`#${c.name.toLowerCase()}`"></use>
+							</svg>
+							<span x-text="c.name" class="text-xs sm:text-base"></span>
+						</li>
+					</template>
+				</ul>
+				<div class="px-1 pb-2">
+					<a class="menu-item" href="https://github.com/henryhale/notes">
+						<svg class="h-6 w-6 inline-block">
+							<use href="#code"></use>
+						</svg>
+						<span class="text-xs sm:text-base">GitHub</span>
+					</a>
+				</div>
+			</aside>
+			<div class="w-full">
+				<div class="p-4 flex items-center">
+					<div class="flex-grow">
+						<span x-text="notes.length" class="badge"></span>
+					</div>
+					<div class="flex items-center justify-center space-x-3 mb-3 w-auto mx-auto py-3">
+						<button @click="() => {newnote = true; category = 1;}" class="btn flex items-center">
+							<svg class="w-4 h-4 inline-block mr-1">
+								<use href="#pencil"></use>
+							</svg>
+							<span>Create</span>
+						</button>
+						<input x-model.trim="search" type="search" name="search" placeholder="search..." />
+					</div>
+				</div>
+				<template x-for="[date, notes] in filteredNotes" :key="date">
+					<fieldset>
+						<legend x-text="formatTime(date)" class="mx-auto px-4 text-sm"></legend>
+						<div class="notes">
+							<template x-for="n in notes" :key="n.t">
+								<div class="note" :class="categories[n.g].color">
+									<span x-text="n.n"></span>
+								</div>
+							</template>
+						</div>
+					</fieldset>
+				</template>
+				<div x-show="!filteredNotes.length" class="py-4 text-center">No notes available.</div>
+			</div>
+		</div>
+	</main>
+
+	<svg style="display: none">
+		<!-- Heroicons: https://heroicons.com -->
+		<symbol id="all" viewBox="0 0 24 24">
+			<path fill="none" stroke-width="1.5" stroke="currentColor" stroke-linecap="round" strike-linejoin="round"
+				d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121.75 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z" />
+		</symbol>
+		<symbol id="family" viewBox="0 0 24 24">
+			<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+				d="M15 19.128a9.38 9.38 0 0 0 2.625.372a9.337 9.337 0 0 0 4.121-.952a4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0a3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0a2.625 2.625 0 0 1 5.25 0Z" />
+		</symbol>
+		<symbol id="other" viewBox="0 0 512 512">
+			<path fill="currentColor"
+				d="M425.706 86.294A240 240 0 0 0 86.294 425.706A240 240 0 0 0 425.706 86.294Zm-80.04 236.745a111.781 111.781 0 0 0 0-134.078l68.218-68.218a207.579 207.579 0 0 1 0 270.514ZM176 256a80 80 0 1 1 80 80a80.091 80.091 0 0 1-80-80ZM391.257 98.116l-68.218 68.218a111.781 111.781 0 0 0-134.078 0l-68.218-68.218a207.579 207.579 0 0 1 270.514 0ZM98.116 120.743l68.218 68.218a111.781 111.781 0 0 0 0 134.078l-68.218 68.218a207.579 207.579 0 0 1 0-270.514Zm22.627 293.141l68.218-68.218a111.781 111.781 0 0 0 134.078 0l68.218 68.218a207.579 207.579 0 0 1-270.514 0Z" />
+		</symbol>
+		<symbol id="personal" viewBox="0 0 512 512">
+			<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"
+				d="M344 144c-3.92 52.87-44 96-88 96s-84.15-43.12-88-96c-4-55 35-96 88-96s92 42 88 96Z" />
+			<path fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="32"
+				d="M256 304c-87 0-175.3 48-191.64 138.6C62.39 453.52 68.57 464 80 464h352c11.44 0 17.62-10.48 15.65-21.4C431.3 352 343 304 256 304Z" />
+		</symbol>
+		<symbol id="study" viewBox="0 0 16 16">
+			<path fill="currentColor"
+				d="M1 2.828c.885-.37 2.154-.769 3.388-.893c1.33-.134 2.458.063 3.112.752v9.746c-.935-.53-2.12-.603-3.213-.493c-1.18.12-2.37.461-3.287.811V2.828zm7.5-.141c.654-.689 1.782-.886 3.112-.752c1.234.124 2.503.523 3.388.893v9.923c-.918-.35-2.107-.692-3.287-.81c-1.094-.111-2.278-.039-3.213.492V2.687zM8 1.783C7.015.936 5.587.81 4.287.94c-1.514.153-3.042.672-3.994 1.105A.5.5 0 0 0 0 2.5v11a.5.5 0 0 0 .707.455c.882-.4 2.303-.881 3.68-1.02c1.409-.142 2.59.087 3.223.877a.5.5 0 0 0 .78 0c.633-.79 1.814-1.019 3.222-.877c1.378.139 2.8.62 3.681 1.02A.5.5 0 0 0 16 13.5v-11a.5.5 0 0 0-.293-.455c-.952-.433-2.48-.952-3.994-1.105C10.413.809 8.985.936 8 1.783z" />
+		</symbol>
+		<symbol id="work" viewBox="0 0 2048 2048">
+			<path fill="currentColor"
+				d="M384 1152q27 0 50 10t40 27t28 41t10 50q0 27-10 50t-27 40t-41 28t-50 10q-27 0-50-10t-40-27t-28-41t-10-50q0-27 10-50t27-40t41-28t50-10zm1280 0q27 0 50 10t40 27t28 41t10 50q0 27-10 50t-27 40t-41 28t-50 10q-27 0-50-10t-40-27t-28-41t-10-50q0-27 10-50t27-40t41-28t50-10zm347-256l-66 65q2 5 10 30t19 59t25 73t24 71t18 54t7 22v650q0 27-10 50t-27 40t-41 28t-50 10h-128q-27 0-50-10t-40-27t-28-41t-10-50H384q0 27-10 50t-27 40t-41 28t-50 10H128q-27 0-50-10t-40-27t-28-41t-10-50v-650l7-21l18-54l24-72q13-39 24-73t20-59t10-30l-66-65H0V768h91l57 58l74-223q16-49 46-89t71-69t87-45t100-16h996q52 0 99 16t88 44t70 69t47 90l74 223l57-58h91v128h-37zM526 512q-63 0-112 36t-70 95l-85 253h1530l-85-253q-20-59-69-95t-113-36H526zm882 1231l-104-207H744l-104 207v49h768v-49zm512 49v-502l-6-18q-6-18-15-47t-21-61t-21-63t-17-51t-9-26H217q-2 5-9 26t-17 50t-21 63t-20 62t-16 46t-6 19v502h384v-79l152-305h720l152 305v79h384z" />
+		</symbol>
+		<symbol id="pencil" viewBox="0 0 24 24">
+			<path fill="none" stroke-width="1.5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+				d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" />
+		</symbol>
+		<symbol id="code" viewBox="0 0 24 24">
+			<path fill="none" stroke-width="1.5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+				d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5" />
+		</symbol>
+	</svg>
+
+	<script type="module" src="/main.js"></script>
+</body>
+
+</html>
