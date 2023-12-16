@@ -52,11 +52,13 @@ alpine.data("state", () => ({
     createNote() {
         this.newnote = true;
         this.category = 1;
+        this.note = "";
     },
-
+    
     cancelNote() {
         this.newnote = false;
         this.editing = false;
+        this.note = "";
     },
 
     category: 0,
