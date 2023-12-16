@@ -20,6 +20,9 @@ While there many todo app implementations, this focuses on simplicity and minima
 - Local storage of notes
 - Edit and delete operations
 
+## live demo
+Try it yourself: [demo](https://notes-demo-pwa.netlify.app/)
+
 ## anatomy 
 
 ### intro
