@@ -4,7 +4,8 @@
 # notes
 A simple note taking application with offline support
 
-![](./media/screenshot.png)
+![](./media/dark.png)
+![](./media/light.png)
 
 </div>
 
