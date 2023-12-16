@@ -11,6 +11,13 @@ A simple note taking application with offline support
 ## overview
 While there many todo app implementations, this focuses on simplicity and minimalism to help me note down ideas just in time. 
 
+## features
+- Light/Dark theme
+- Minimal and fast
+- Beginner friendly
+- Local storage of notes
+- Edit and delete operations
+
 ## anatomy 
 
 ### intro
