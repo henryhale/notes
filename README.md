@@ -46,7 +46,7 @@ Hovering on a note displays the operation buttons: _edit_ and _delete_.
 
 ## development
 To get started with modifying the code or fixing a bug or implementing a new feature:
-- install [node.js](https://nodejs.org) and [npm](https://npmjs.org) or [pnpm](https://pnpmjs.io)
+- install [node.js](https://nodejs.org) and [npm](https://npmjs.org) or [pnpm](https://pnpm.io)
 - install dependencies: `npm install` or `pnpm install`
 - run dev server: `npm run dev` or `pnpm dev`
 - building for production: `npm run build` or `pnpm build` produces `dist` directory containing deployable files
