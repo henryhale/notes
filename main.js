@@ -25,19 +25,38 @@ const store = {
 };
 
 alpine.data("state", () => ({
+    init() {
+        this.$watch("notes", (state) => store.write(state));
+    },
+
     notes: store.read([]),
 
     newnote: false,
     note: "",
     saveNote() {
-        this.notes.push({ 
+        const note = { 
             n: this.note, 
             g: this.category,
             t: getTime()
-        });
+        };
+        if (!this.editing) {
+            this.notes.push(note);
+        } else {
+            this.notes[this.editIndex] = note;
+            this.editing = false;
+        }
         this.note = "";
         this.newnote = false;
-        store.write(this.notes);
+    },
+
+    createNote() {
+        this.newnote = true;
+        this.category = 1;
+    },
+
+    cancelNote() {
+        this.newnote = false;
+        this.editing = false;
     },
 
     category: 0,
@@ -59,9 +78,10 @@ alpine.data("state", () => ({
     get filteredNotes() {
         const c = this.category;
         const s = this.search;
-        let result = c == 0 ? this.notes : this.notes.filter(x => x.g == this.category);
-        result = !s.length ? result : result.filter(x => new RegExp(`${s}`, "gi").test(x.n));
-        return [...result.reduce((all, v) => {
+        let result = this.notes;
+        if (c != 0) result = result.filter(x => x.g == c);
+        if (s.length) result = result.filter(x => new RegExp(`${s}`, "gi").test(x.n));
+        return Array.from(result.reduce((all, v) => {
             let day = Math.floor(new Date(v.t).getTime()/(1000*60*60*24));
             if (all.has(day)) {
                 all.get(day).push(v);
@@ -69,7 +89,7 @@ alpine.data("state", () => ({
                 all.set(day, [v]);
             }
             return all;
-        }, new Map()).entries()].sort((a, b) => b[0] - a[0]);
+        }, new Map()).entries()).sort((a, b) => b[0] - a[0]);
     },
 
     formatTime(d) {
@@ -80,8 +100,23 @@ alpine.data("state", () => ({
             return 'Yesterday';
         }
         return new Date(d*1000*60*60*24).toLocaleDateString();
+    },
+
+    deleteNote(ts) {
+        this.notes.splice(this.notes.findIndex(n => n.t == ts), 1);
+    },
+
+    editing: false,
+    editIndex: null,
+    editNote(ts) {
+        this.editIndex = this.notes.findIndex(n => n.t == ts);
+        const { n, g } = this.notes[this.editIndex];
+        this.note = n;
+        this.editing = true;
+        this.newnote = true;
+        this.category = g;
     }
-    
+
 }));
 
 alpine.start();
