@@ -105,7 +105,9 @@ alpine.data("state", () => ({
     },
 
     deleteNote(ts) {
-        this.notes.splice(this.notes.findIndex(n => n.t == ts), 1);
+        if (confirm("Do you want to delete this note?")) {
+            this.notes.splice(this.notes.findIndex(n => n.t == ts), 1);
+        }
     },
 
     editing: false,
