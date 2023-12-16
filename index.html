@@ -15,7 +15,7 @@
 				<img src="/favicon.png" alt="Notes" class="w-6 h-6">
 			</div>
 			<span>What's on your mind?</span>
-			<button type="button" class="btn" @click="() => {newnote = true; category = 1;}">
+			<button type="button" class="btn" @click="createNote">
 				<span>Create</span>
 			</button>
 		</div>
@@ -31,7 +31,7 @@
 					</template>
 				</select>
 				<span class="flex-grow"></span>
-				<button type="button" class="btn" @click="newnote = false">
+				<button type="button" class="btn" @click="cancelNote">
 					<span>Cancel</span>
 				</button>
 				<button type="button" class="btn" @click="saveNote" :disabled="!note.length">
@@ -51,8 +51,8 @@
 				<ul class="flex-grow space-y-2 px-1">
 					<template x-for="c in categories" :key="c.name">
 						<li class="menu-item" :class="[c.color, c.value == category ? 'active-item': '']"
-							@click="() => { category = c.value; search = '';}">
-							<svg class="w-6 h-6 inline-block fill-current">
+							@click="setCategory(c.value)">
+							<svg class="w-5 h-5 sm:w-6 sm:h-6 inline-block fill-current">
 								<use :href="`#${c.name.toLowerCase()}`"></use>
 							</svg>
 							<span x-text="c.name" class="text-xs sm:text-base"></span>
@@ -61,7 +61,7 @@
 				</ul>
 				<div class="px-1 pb-2">
 					<a class="menu-item" href="https://github.com/henryhale/notes">
-						<svg class="h-6 w-6 inline-block">
+						<svg class="w-5 h-5 sm:w-6 sm:h-6 inline-block">
 							<use href="#code"></use>
 						</svg>
 						<span class="text-xs sm:text-base">GitHub</span>
@@ -74,7 +74,7 @@
 						<span x-text="notes.length" class="badge"></span>
 					</div>
 					<div class="flex items-center justify-center space-x-3 mb-3 w-auto mx-auto py-3">
-						<button @click="() => {newnote = true; category = 1;}" class="btn flex items-center">
+						<button @click="createNote" class="btn flex items-center">
 							<svg class="w-4 h-4 inline-block mr-1">
 								<use href="#pencil"></use>
 							</svg>
@@ -83,13 +83,25 @@
 						<input x-model.trim="search" type="search" name="search" placeholder="search..." />
 					</div>
 				</div>
-				<template x-for="[date, notes] in filteredNotes" :key="date">
+				<template x-for="[date, list] in filteredNotes" :key="date">
 					<fieldset>
 						<legend x-text="formatTime(date)" class="mx-auto px-4 text-sm"></legend>
 						<div class="notes">
-							<template x-for="n in notes" :key="n.t">
-								<div class="note" :class="categories[n.g].color">
+							<template x-for="n in list" :key="n.t">
+								<div class="note relative group" :class="categories[n.g].color">
 									<span x-text="n.n"></span>
+									<div class="absolute bottom-0 right-0 hidden group-hover:flex">
+										<button @click="editNote(n.t)" class="px-1.5 py-1 bg-inherit">
+											<svg class="w-4 h-4">
+												<use href="#pencil"></use>
+											</svg>
+										</button>
+										<button @click="deleteNote(n.t)" class="px-1.5 py-1 bg-inherit">
+											<svg class="w-4 h-4">
+												<use href="#trash"></use>
+											</svg>
+										</button>
+									</div>
 								</div>
 							</template>
 						</div>
@@ -135,6 +147,9 @@
 		<symbol id="code" viewBox="0 0 24 24">
 			<path fill="none" stroke-width="1.5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
 				d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5" />
+		</symbol>
+		<symbol id="trash" viewBox="0 0 24 24">
+			<path  fill="none" stroke-width="1.5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
 		</symbol>
 	</svg>
 
