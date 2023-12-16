@@ -5,6 +5,7 @@
 A simple note taking application with offline support
 
 ![](./media/dark.png)
+
 ![](./media/light.png)
 
 </div>
@@ -23,20 +24,24 @@ While there many todo app implementations, this focuses on simplicity and minima
 
 ### intro
 Incase you have not used it before or currently have zero notes, this screen is displayed:
+
 ![](media/0-intro.png)
 
 ### entry form
 When you click `Create`, a note entry form is displayed for you to start writing.
 Change the category of the note using the select button. `Save` applies the changes made and update the notes in storage.
+
 ![](media/1-entry.png)
 
 ### dashboard
 On load, notes are fetched from storage and rendered in the dashboard. The search bar matched the notes by regexp with case-insenstive and global flags. The total number of notes is displayed in the top left of the header.
+
 ![](media/2-dashboard.png)
 
 ### notes
 Notes are grouped by date and ordered by timestamp.
 Hovering on a note displays the operation buttons: _edit_ and _delete_.
+
 ![](media/3-list.png)
 
 ## development
